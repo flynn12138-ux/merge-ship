@@ -1547,8 +1547,11 @@ html body {
   function lev(a, b) { const m = a.length, n = b.length; if (!m) return n; if (!n) return m; let p = Array.from({ length: n + 1 }, (_, j) => j);
     for (let i = 1; i <= m; i++) { const c = [i]; for (let j = 1; j <= n; j++) c[j] = Math.min(p[j] + 1, c[j - 1] + 1, p[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)); p = c; } return p[n]; }
   const similar = (a, b) => { a = norm(a); b = norm(b); if (!a || !b) return false; if (a === b) return true; return 1 - lev(a, b) / Math.max(a.length, b.length) >= 0.95; };
-  const keyOf = (r) => (r.order + ' ' + r.batch).trim();
-  const groupOf = (r) => r.merge || keyOf(r);
+  const label = (r) => (r.order + ' ' + r.batch).trim();
+  const codeFrom = (order, batch) => String(order || '').replace(/[^0-9]/g, '') + ('00' + String(batch || '').replace(/[^0-9]/g, '')).slice(-2); // EO-2026-11-056 + Batch 4 -> 20261105604
+  const keyOf = (r) => codeFrom(r.order, r.batch);
+  const normM = (m) => { m = String(m || '').trim(); if (!m) return ''; const x = m.match(/^([A-Za-z]*-?[\d-]+)\s*(?:batch)?\s*(\d*)$/i); return /[A-Za-z]/.test(m) && x ? codeFrom(x[1], x[2]) : m; }; // old "EO-… Batch 2" values still count
+  const groupOf = (r) => normM(r.merge) || keyOf(r);
   const msg = (h, cls = '') => { $('#body').innerHTML = `<div class="msg ${cls}">${h}</div>`; };
   const toast = (s, bad) => { const t = $('#toast'); t.textContent = s; t.className = 'show' + (bad ? ' bad' : ''); clearTimeout(toast.t); toast.t = setTimeout(() => { t.className = ''; }, 2600); };
 
@@ -1570,7 +1573,7 @@ html body {
       pageToken = res.hasMore ? res.pageToken : undefined; } while (pageToken !== undefined && ++guard < 200);
     rows = out;
   }
-  const cmp = (a, b) => a.order.localeCompare(b.order) || a.batch.localeCompare(b.batch, undefined, { numeric: true });
+  const cmp = (a, b) => keyOf(a).localeCompare(keyOf(b));
 
   function render() {
     if (!cur) { msg('在 06-Log track 中点选一行（任意单元格），这里会列出同一客户、未发货的批次。'); return; }
@@ -1579,7 +1582,7 @@ html body {
     const list = rows.filter((r) => r.id === me.id || (!r.done && similar(r.client, me.client))).sort(cmp);
     const items = list.map((r) => { const rg = groupOf(r), inG = rg === g, other = r.merge && !inG;
       return `<label class="it ${r.id === me.id ? 'me' : ''}"><input type="checkbox" data-id="${r.id}" ${inG ? 'checked' : ''}>
-        <span class="k">${esc(keyOf(r))}</span>${r.done ? '<i class="tag">已发货</i>' : ''}${other ? `<i class="tag o" title="${esc(r.merge)}">已在 ${esc(r.merge)}</i>` : ''}</label>`; }).join('');
+        <span class="k">${esc(label(r))}</span>${r.done ? '<i class="tag">已发货</i>' : ''}${other ? `<i class="tag o" title="${esc(rg)}">已在 ${esc(rg)}</i>` : ''}</label>`; }).join('');
     $('#body').innerHTML = `<div class="cli"><span>客户</span><b>${esc(me.client || '（空）')}</b></div>
       <div class="cli"><span>本组</span><b>${esc(g)}</b></div>
       <div class="hint">勾选要和本行一起发货的批次（同一客户名相似度 ≥95%、未勾 DONE）</div>
@@ -1600,11 +1603,11 @@ html body {
     let main = sel.some((r) => keyOf(r) === g) ? g : (sel.find((r) => r.id === me.id) ? keyOf(me) : keyOf(sel.sort(cmp)[0]));
     const changes = [];
     sel.forEach((r) => { if (r.merge !== main) changes.push({ id: r.id, val: main }); });
-    rows.filter((r) => !ids.includes(r.id) && r.merge && (r.merge === g || r.merge === main)).forEach((r) => changes.push({ id: r.id, val: '' }));
+    rows.filter((r) => !ids.includes(r.id) && r.merge && (normM(r.merge) === g || normM(r.merge) === main)).forEach((r) => changes.push({ id: r.id, val: '' }));
     busy = true; try { await write(changes); await readRows(); render(); toast(`已保存：${sel.length} 行 → ${main}`); } catch (e) { console.error(e); toast('保存失败：' + (e.message || e), true); } finally { busy = false; }
   }
   async function clearGroup(g) {
-    if (busy) return; const ch = rows.filter((r) => r.merge && r.merge === g).map((r) => ({ id: r.id, val: '' }));
+    if (busy) return; const ch = rows.filter((r) => r.merge && normM(r.merge) === g).map((r) => ({ id: r.id, val: '' }));
     if (!ch.length) { toast('本组没有需要清空的行'); return; }
     busy = true; try { await write(ch); await readRows(); render(); toast(`已清空 ${ch.length} 行`); } catch (e) { toast('清空失败：' + (e.message || e), true); } finally { busy = false; }
   }
