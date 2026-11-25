@@ -1,25 +1,27 @@
-<!DOCTYPE html><html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>合并发货</title>
+<!DOCTYPE html><html lang="zh" data-theme="light"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>合并发货</title>
 <style>
-:root{--b:#1456f0;--bg:#f5f6f8;--t:#1f2329;--s:#646a73;--line:#e3e5e8}
-*{box-sizing:border-box}body{margin:0;font:13px/1.5 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--t);background:#fff}
-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--line)}
-header b{font-size:15px}header button{border:0;background:var(--bg);border-radius:8px;padding:5px 10px;cursor:pointer;color:var(--b)}
+:root{--b:#1456f0;--lb:#4c7ef5;--btn:#eef3ff;--bg:#fff;--t:#1f2329;--s:#646a73;--muted:#8a9099;--line:#e3e5e8;--pd:#fff}
+[data-theme=dark]{--bg:#1b1c1f;--t:#e8e9eb;--s:#a3a8b0;--muted:#8d939c;--line:#34363b;--btn:#25304a;--lb:#8fb0ff;--pd:#232428}
+*{box-sizing:border-box}body{margin:0;font:15px/1.5 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;color:var(--t);background:var(--bg)}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px;border-bottom:1px solid var(--line)}
+header b{font-size:17px;white-space:nowrap}.hb{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+header button{border:0;background:var(--btn);border-radius:8px;padding:5px 9px;cursor:pointer;color:var(--lb);font-size:13px}.hb{flex-wrap:nowrap!important}
 #body{padding:12px 14px}.msg{color:var(--s);padding:30px 6px;text-align:center}.msg.bad{color:#d83931}
-.cli{display:flex;gap:8px;margin-bottom:4px}.cli span{color:var(--s);min-width:30px}.cli b{word-break:break-word}
-.hint{color:var(--s);font-size:12px;margin:8px 0}
-.list{border:1px solid var(--line);border-radius:10px;max-height:calc(100vh - 300px);overflow:auto}.bar{margin-top:8px!important}
-.it{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line);cursor:pointer}.it:last-child{border-bottom:0}
-.it.me{background:#eef3ff}.it input{width:16px;height:16px;margin:0}.k{flex:1}
-.tag{font-style:normal;font-size:11px;color:#8f5b00;background:#fff3d6;border-radius:6px;padding:1px 6px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bar{display:flex;gap:8px;margin-top:12px}.bar button{flex:1;border:0;border-radius:10px;padding:9px;cursor:pointer;background:var(--bg);color:var(--t);font-size:13px}
-.bar .pri{background:var(--b);color:#fff}.bar .pri2{background:#e8f0ff;color:var(--b);font-weight:600}.bar button:disabled{opacity:.45;cursor:default}
-#cli{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:13px;background:#fff}
-.tag.none{background:#f0f1f3;color:#8f959e}.tag.solo{background:#f0f1f3;color:#4e5969}.fx{padding:6px 10px;border-bottom:1px solid var(--line);font-size:12px}.fx b{display:block}.fx span{color:var(--s)}
-#toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#1f2329;color:#fff;padding:7px 14px;border-radius:8px;opacity:0;transition:.2s;pointer-events:none;font-size:12px;max-width:90%}
-#toast.show{opacity:.92}#toast.bad{background:#d83931}
-</style></head><body>
-<header><b>合并发货</b><span><button id="tidy">整理全部</button> <button id="refresh">刷新</button></span></header>
-<div id="body"></div><div id="toast"></div>
+#cli{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;font-size:15px;background:var(--bg);color:var(--t)}
+.hint{color:var(--s);font-size:13px;margin:10px 0}
+.list{border:1px solid var(--line);border-radius:10px;max-height:calc(100vh - 380px);min-height:120px;overflow:auto}
+.it{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid rgba(0,0,0,.06);cursor:pointer;background:var(--pd)}
+.it:last-child{border-bottom:0}.it input{width:18px;height:18px;margin:0;flex:none}.k{flex:1;font-size:15px}
+.sep{height:6px;background:var(--line)}
+.tag{font-style:normal;font-size:13px;font-weight:700;border-radius:7px;padding:2px 9px;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+.tag.pend{background:transparent;color:var(--muted);border:1px dashed var(--muted);font-weight:600}
+.btns{margin-top:12px}.bar{display:flex;gap:8px;margin-top:8px}
+.bar button{flex:1;border:1px solid transparent;border-radius:10px;padding:10px;cursor:pointer;background:var(--btn);color:var(--lb);font-size:15px;font-weight:600}
+.bar button.pri{background:var(--b);color:#fff}.bar button:disabled{opacity:.4;cursor:default}
+.fx{padding:7px 12px;border-bottom:1px solid var(--line);font-size:13px}.fx b{display:block}.fx span{color:var(--s)}
+#toast{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:#1f2329;color:#fff;padding:8px 14px;border-radius:8px;opacity:0;transition:.2s;pointer-events:none;font-size:13px;max-width:90%}
+#toast.show{opacity:.94}#toast.bad{background:#d83931}
+</style></head><body><div id="app"></div><div id="toast"></div>
 <script>(()=>{var p4=Object.defineProperty;var u0=(e,t,n)=>()=>{if(n)throw n[0];try{return e&&(t=e(e=0)),t}catch(r){throw n=[r],r}};var h4=(e,t)=>{for(var n in t)p4(e,n,{get:t[n],enumerable:!0})};var _M,ed,TM,oE,BM,jM,bp,iE,h0,aE,LM,rE,rt,Mt,Wi,It,td,zM,j,he,ha,K,HM,X,wp,VM,xp,Ep=u0(()=>{_M=Object.create,ed=Object.defineProperty,TM=Object.defineProperties,oE=Object.getOwnPropertyDescriptor,BM=Object.getOwnPropertyDescriptors,jM=Object.getOwnPropertyNames,bp=Object.getOwnPropertySymbols,iE=Object.getPrototypeOf,h0=Object.prototype.hasOwnProperty,aE=Object.prototype.propertyIsEnumerable,LM=Reflect.get,rE=(e,t,n)=>t in e?ed(e,t,{enumerable:!0,configurable:!0,writable:!0,value:n}):e[t]=n,rt=(e,t)=>{for(var n in t||(t={}))h0.call(t,n)&&rE(e,n,t[n]);if(bp)for(var n of bp(t))aE.call(t,n)&&rE(e,n,t[n]);return e},Mt=(e,t)=>TM(e,BM(t)),Wi=(e,t)=>{var n={};for(var r in e)h0.call(e,r)&&t.indexOf(r)<0&&(n[r]=e[r]);if(e!=null&&bp)for(var r of bp(e))t.indexOf(r)<0&&aE.call(e,r)&&(n[r]=e[r]);return n},It=(e,t)=>()=>(t||e((t={exports:{}}).exports,t),t.exports),td=(e,t)=>{for(var n in t)ed(e,n,{get:t[n],enumerable:!0})},zM=(e,t,n,r)=>{if(t&&typeof t=="object"||typeof t=="function")for(let o of jM(t))!h0.call(e,o)&&o!==n&&ed(e,o,{get:()=>t[o],enumerable:!(r=oE(t,o))||r.enumerable});return e},j=(e,t,n)=>(n=e!=null?_M(iE(e)):{},zM(t||!e||!e.__esModule?ed(n,"default",{value:e,enumerable:!0}):n,e)),he=(e,t,n,r)=>{for(var o=r>1?void 0:r?oE(t,n):t,l=e.length-1,u;l>=0;l--)(u=e[l])&&(o=(r?u(t,n,o):u(o))||o);return r&&o&&ed(t,n,o),o},ha=(e,t,n)=>LM(iE(e),n,t),K=(e,t,n)=>new Promise((r,o)=>{var l=d=>{try{s(n.next(d))}catch(f){o(f)}},u=d=>{try{s(n.throw(d))}catch(f){o(f)}},s=d=>d.done?r(d.value):Promise.resolve(d.value).then(l,u);s((n=n.apply(e,t)).next())}),HM=It(e=>{var t=Symbol.for("react.element"),n=Symbol.for("react.portal"),r=Symbol.for("react.fragment"),o=Symbol.for("react.strict_mode"),l=Symbol.for("react.profiler"),u=Symbol.for("react.provider"),s=Symbol.for("react.context"),d=Symbol.for("react.forward_ref"),f=Symbol.for("react.suspense"),p=Symbol.for("react.memo"),h=Symbol.for("react.lazy"),m=Symbol.iterator;function v(L){return L===null||typeof L!="object"?null:(L=m&&L[m]||L["@@iterator"],typeof L=="function"?L:null)}var x={isMounted:function(){return!1},enqueueForceUpdate:function(){},enqueueReplaceState:function(){},enqueueSetState:function(){}},w=Object.assign,C={};function b(L,P,J){this.props=L,this.context=P,this.refs=C,this.updater=J||x}b.prototype.isReactComponent={},b.prototype.setState=function(L,P){if(typeof L!="object"&&typeof L!="function"&&L!=null)throw Error("setState(...): takes an object of state variables to update or a function which returns an object of state variables.");this.updater.enqueueSetState(this,L,P,"setState")},b.prototype.forceUpdate=function(L){this.updater.enqueueForceUpdate(this,L,"forceUpdate")};function $(){}$.prototype=b.prototype;function k(L,P,J){this.props=L,this.context=P,this.refs=C,this.updater=J||x}var F=k.prototype=new $;F.constructor=k,w(F,b.prototype),F.isPureReactComponent=!0;var I=Array.isArray,O=Object.prototype.hasOwnProperty,A={current:null},M={key:!0,ref:!0,__self:!0,__source:!0};function R(L,P,J){var ne,de={},ye=null,ce=null;if(P!=null)for(ne in P.ref!==void 0&&(ce=P.ref),P.key!==void 0&&(ye=""+P.key),P)O.call(P,ne)&&!M.hasOwnProperty(ne)&&(de[ne]=P[ne]);var ge=arguments.length-2;if(ge===1)de.children=J;else if(1<ge){for(var le=Array(ge),me=0;me<ge;me++)le[me]=arguments[me+2];de.children=le}if(L&&L.defaultProps)for(ne in ge=L.defaultProps,ge)de[ne]===void 0&&(de[ne]=ge[ne]);return{$$typeof:t,type:L,key:ye,ref:ce,props:de,_owner:A.current}}function D(L,P){return{$$typeof:t,type:L.type,key:P,ref:L.ref,props:L.props,_owner:L._owner}}function B(L){return typeof L=="object"&&L!==null&&L.$$typeof===t}function z(L){var P={"=":"=0",":":"=2"};return"$"+L.replace(/[=:]/g,function(J){return P[J]})}var G=/\/+/g;function q(L,P){return typeof L=="object"&&L!==null&&L.key!=null?z(""+L.key):P.toString(36)}function V(L,P,J,ne,de){var ye=typeof L;(ye==="undefined"||ye==="boolean")&&(L=null);var ce=!1;if(L===null)ce=!0;else switch(ye){case"string":case"number":ce=!0;break;case"object":switch(L.$$typeof){case t:case n:ce=!0}}if(ce)return ce=L,de=de(ce),L=ne===""?"."+q(ce,0):ne,I(de)?(J="",L!=null&&(J=L.replace(G,"$&/")+"/"),V(de,P,J,"",function(me){return me})):de!=null&&(B(de)&&(de=D(de,J+(!de.key||ce&&ce.key===de.key?"":(""+de.key).replace(G,"$&/")+"/")+L)),P.push(de)),1;if(ce=0,ne=ne===""?".":ne+":",I(L))for(var ge=0;ge<L.length;ge++){ye=L[ge];var le=ne+q(ye,ge);ce+=V(ye,P,J,le,de)}else if(le=v(L),typeof le=="function")for(L=le.call(L),ge=0;!(ye=L.next()).done;)ye=ye.value,le=ne+q(ye,ge++),ce+=V(ye,P,J,le,de);else if(ye==="object")throw P=String(L),Error("Objects are not valid as a React child (found: "+(P==="[object Object]"?"object with keys {"+Object.keys(L).join(", ")+"}":P)+"). If you meant to render a collection of children, use an array instead.");return ce}function W(L,P,J){if(L==null)return L;var ne=[],de=0;return V(L,ne,"","",function(ye){return P.call(J,ye,de++)}),ne}function Y(L){if(L._status===-1){var P=L._result;P=P(),P.then(function(J){(L._status===0||L._status===-1)&&(L._status=1,L._result=J)},function(J){(L._status===0||L._status===-1)&&(L._status=2,L._result=J)}),L._status===-1&&(L._status=0,L._result=P)}if(L._status===1)return L._result.default;throw L._result}var H={current:null},te={transition:null},N={ReactCurrentDispatcher:H,ReactCurrentBatchConfig:te,ReactCurrentOwner:A};function ae(){throw Error("act(...) is not supported in production builds of React.")}e.Children={map:W,forEach:function(L,P,J){W(L,function(){P.apply(this,arguments)},J)},count:function(L){var P=0;return W(L,function(){P++}),P},toArray:function(L){return W(L,function(P){return P})||[]},only:function(L){if(!B(L))throw Error("React.Children.only expected to receive a single React element child.");return L}},e.Component=b,e.Fragment=r,e.Profiler=l,e.PureComponent=k,e.StrictMode=o,e.Suspense=f,e.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED=N,e.act=ae,e.cloneElement=function(L,P,J){if(L==null)throw Error("React.cloneElement(...): The argument must be a React element, but you passed "+L+".");var ne=w({},L.props),de=L.key,ye=L.ref,ce=L._owner;if(P!=null){if(P.ref!==void 0&&(ye=P.ref,ce=A.current),P.key!==void 0&&(de=""+P.key),L.type&&L.type.defaultProps)var ge=L.type.defaultProps;for(le in P)O.call(P,le)&&!M.hasOwnProperty(le)&&(ne[le]=P[le]===void 0&&ge!==void 0?ge[le]:P[le])}var le=arguments.length-2;if(le===1)ne.children=J;else if(1<le){ge=Array(le);for(var me=0;me<le;me++)ge[me]=arguments[me+2];ne.children=ge}return{$$typeof:t,type:L.type,key:de,ref:ye,props:ne,_owner:ce}},e.createContext=function(L){return L={$$typeof:s,_currentValue:L,_currentValue2:L,_threadCount:0,Provider:null,Consumer:null,_defaultValue:null,_globalName:null},L.Provider={$$typeof:u,_context:L},L.Consumer=L},e.createElement=R,e.createFactory=function(L){var P=R.bind(null,L);return P.type=L,P},e.createRef=function(){return{current:null}},e.forwardRef=function(L){return{$$typeof:d,render:L}},e.isValidElement=B,e.lazy=function(L){return{$$typeof:h,_payload:{_status:-1,_result:L},_init:Y}},e.memo=function(L,P){return{$$typeof:p,type:L,compare:P===void 0?null:P}},e.startTransition=function(L){var P=te.transition;te.transition={};try{L()}finally{te.transition=P}},e.unstable_act=ae,e.useCallback=function(L,P){return H.current.useCallback(L,P)},e.useContext=function(L){return H.current.useContext(L)},e.useDebugValue=function(){},e.useDeferredValue=function(L){return H.current.useDeferredValue(L)},e.useEffect=function(L,P){return H.current.useEffect(L,P)},e.useId=function(){return H.current.useId()},e.useImperativeHandle=function(L,P,J){return H.current.useImperativeHandle(L,P,J)},e.useInsertionEffect=function(L,P){return H.current.useInsertionEffect(L,P)},e.useLayoutEffect=function(L,P){return H.current.useLayoutEffect(L,P)},e.useMemo=function(L,P){return H.current.useMemo(L,P)},e.useReducer=function(L,P,J){return H.current.useReducer(L,P,J)},e.useRef=function(L){return H.current.useRef(L)},e.useState=function(L){return H.current.useState(L)},e.useSyncExternalStore=function(L,P,J){return H.current.useSyncExternalStore(L,P,J)},e.useTransition=function(){return H.current.useTransition()},e.version="18.3.1"}),X=It((e,t)=>{t.exports=HM()}),wp=It((e,t)=>{(function(n,r){typeof e=="object"&&typeof t<"u"?t.exports=r(X()):typeof define=="function"&&define.amd?define(["react"],r):(n=n||self,n.styled=r(n.React))})(e,function(n){var r=typeof process<"u"&&typeof process.env<"u"&&(process.env.REACT_APP_SC_ATTR||process.env.SC_ATTR)||"data-styled",o="active",l="data-styled-version",u="6.2.0",s=`/*!sc*/
 `,d=typeof window<"u"&&typeof document<"u",f=!!(typeof SC_DISABLE_SPEEDY=="boolean"?SC_DISABLE_SPEEDY:typeof process<"u"&&typeof process.env<"u"&&typeof process.env.REACT_APP_SC_DISABLE_SPEEDY<"u"&&process.env.REACT_APP_SC_DISABLE_SPEEDY!==""?process.env.REACT_APP_SC_DISABLE_SPEEDY!=="false"&&process.env.REACT_APP_SC_DISABLE_SPEEDY:!(typeof process<"u"&&typeof process.env<"u"&&typeof process.env.SC_DISABLE_SPEEDY<"u"&&process.env.SC_DISABLE_SPEEDY!=="")||process.env.SC_DISABLE_SPEEDY!=="false"&&process.env.SC_DISABLE_SPEEDY),p={},h=function(){return h=Object.assign||function(S){for(var _,U=1,Q=arguments.length;U<Q;U++){_=arguments[U];for(var fe in _)Object.prototype.hasOwnProperty.call(_,fe)&&(S[fe]=_[fe])}return S},h.apply(this,arguments)};function m(S,_,U){if(U||arguments.length===2)for(var Q=0,fe=_.length,Me;Q<fe;Q++)(Me||!(Q in _))&&(Me||(Me=Array.prototype.slice.call(_,0,Q)),Me[Q]=_[Q]);return S.concat(Me||Array.prototype.slice.call(_))}typeof SuppressedError=="function"&&SuppressedError;var v=Object.freeze([]),x=Object.freeze({});function w(S,_){Object.defineProperty(S,"toString",{value:_})}var C={1:`Cannot create styled-component for component: %s.
 
@@ -1539,9 +1541,25 @@ html body {
   const BT = window.__MOCK_BITABLE || window.bitable;
   const $ = (s) => document.querySelector(s);
   const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const LS = { get: (k, d) => { try { const v = localStorage.getItem('mship_' + k); return v == null ? d : v; } catch (e) { return d; } }, set: (k, v) => { try { localStorage.setItem('mship_' + k, v); } catch (e) {} } };
+  const I18N = {
+    zh: { title: '合并发货', tidy: '整理全部', refresh: '刷新', pickClient: '— 选择客户 —', pickHint: '选择客户，或在台账中点选一行', hint: (n) => `勾选一起发货的批次 →「组成同批」，再勾下一批…… 最后点「保存」。待处理 ${n} 个`,
+      none: '这个客户没有未发货的批次', group: '组成同批', solo: '单独', rest: '剩余未安排 → 单独', ungroup: '取消同批', clearAll: '取消全部', undo: '撤销', save: '保存', saveDirty: (n) => `保存（${n}）`,
+      tagLot: (i) => `票 ${i}`, tagSolo: '单独', tagPend: '待处理', tagWith: (c) => `随 ${c}`, needTwo: '至少勾选 2 个批次组成同批', needPick: '先勾选批次', noRest: '没有待处理的批次', unsaved: '有未保存的修改，先保存或撤销',
+      saved: (n) => `已保存 ${n} 行`, saveFail: '保存失败：', refreshed: '已刷新', noData: '台账里没有数据', loading: '读取中…', openInLark: '请在 Lark 多维表格的插件侧边栏中打开',
+      noTable: '找不到 06-Log track 数据表', missF: '06-Log track 缺少字段：', mergeType: '「合并发货」需要是「文本」字段',
+      tidyHint: (n) => `整理全部未发货批次：空白的填自己的编码，旧格式改成新格式，每批以编码最小的批次为主批次。共 ${n} 行要修改：`, tidyOk: '确认修改', cancel: '取消', tidyNone: '全部已整理，无需修改', tidyDone: (n) => `已整理 ${n} 行`, tidyFail: '整理失败：', empty: '（空）' },
+    en: { title: 'Shipments', tidy: 'Tidy all', refresh: 'Refresh', pickClient: '— Choose client —', pickHint: 'Choose a client, or click a row in the table', hint: (n) => `Tick batches shipped together → "Group", then the next lot… finally "Save". Pending: ${n}`,
+      none: 'No open batches for this client', group: 'Group', solo: 'Single', rest: 'Rest pending → Single', ungroup: 'Ungroup', clearAll: 'Clear all', undo: 'Undo', save: 'Save', saveDirty: (n) => `Save (${n})`,
+      tagLot: (i) => `Lot ${i}`, tagSolo: 'Single', tagPend: 'Pending', tagWith: (c) => `with ${c}`, needTwo: 'Tick at least 2 batches to group', needPick: 'Tick batches first', noRest: 'No pending batches', unsaved: 'Unsaved changes — save or undo first',
+      saved: (n) => `Saved ${n} row(s)`, saveFail: 'Save failed: ', refreshed: 'Refreshed', noData: 'No data in the table', loading: 'Loading…', openInLark: 'Open this in the Lark Base extension sidebar',
+      noTable: '06-Log track table not found', missF: '06-Log track is missing: ', mergeType: '"合并发货" must be a Text field',
+      tidyHint: (n) => `Tidy all open batches: blanks get their own code, old formats are converted, each lot uses its smallest batch as the main one. ${n} row(s) to change:`, tidyOk: 'Apply', cancel: 'Cancel', tidyNone: 'Everything is tidy already', tidyDone: (n) => `Tidied ${n} row(s)`, tidyFail: 'Tidy failed: ', empty: '(empty)' } };
+  let lang = LS.get('lang', 'zh'), theme = LS.get('theme', 'light');
+  const t = (k, ...a) => { const v = (I18N[lang] || I18N.zh)[k]; return typeof v === 'function' ? v(...a) : v; };
   const NAMES = { order: ['order no.', 'order no'], batch: ['batch'], client: ['1.1-clients name', 'clients name', 'client name'], done: ['done?', 'done'], merge: ['合并发货'] };
   const LABEL = { order: 'Order NO.', batch: 'Batch', client: '1.1-Clients Name', done: 'DONE?', merge: '合并发货' };
-  let T = null, F = {}, rows = [], byId = new Map(), client = '', plan = new Map(), dirty = false, busy = false, pendingFix = null;
+  let T = null, F = {}, rows = [], byId = new Map(), client = '', plan = new Map(), busy = false, pendingFix = null, state = 'init', fatal = '';
 
   const txt = (v) => { if (v == null) return ''; if (typeof v === 'string' || typeof v === 'number') return String(v); if (typeof v === 'boolean') return v ? '1' : '';
     if (Array.isArray(v)) return v.map(txt).join(''); if (typeof v === 'object') return v.text ?? v.name ?? (v.value != null ? txt(v.value) : ''); return ''; };
@@ -1553,21 +1571,19 @@ html body {
   const label = (r) => (r.order + ' ' + r.batch).trim();
   const codeOf = (r) => codeFrom(r.order, r.batch);
   const display = (code) => { const m = rows.find((r) => codeOf(r) === code); return m ? `${code} · ${label(m)}` : code; };
-  // existing value -> main code ("20261105803 · …", "20261105803", or old "LO-2026-11-058 Batch 3")
   const mainOf = (v) => { v = String(v || '').trim(); if (!v) return ''; let m = v.match(/^(\d{8,})/); if (m) return m[1];
     m = v.match(/^([A-Za-z]*-?[\d-]+)\s*(?:batch)?\s*(\d*)/i); return m ? codeFrom(m[1], m[2]) : ''; };
-  const cmpCode = (a, b) => codeOf(a).localeCompare(codeOf(b));
-  const toast = (s, bad) => { const t = $('#toast'); t.textContent = s; t.className = 'show' + (bad ? ' bad' : ''); clearTimeout(toast.t); toast.t = setTimeout(() => { t.className = ''; }, 2800); };
-  const msg = (h, cls = '') => { $('#body').innerHTML = `<div class="msg ${cls}">${h}</div>`; };
+  const savedOf = (r) => mainOf(r.merge);
+  const toast = (s, bad) => { const el = $('#toast'); el.textContent = s; el.className = 'show' + (bad ? ' bad' : ''); clearTimeout(toast.t); toast.t = setTimeout(() => { el.className = ''; }, 2800); };
 
   async function findTable() {
     const metas = await BT.base.getTableMetaList(); const m = metas.find((x) => /06-?\s*log/i.test(x.name));
-    if (!m) throw new Error('找不到 06-Log track 数据表');
+    if (!m) throw new Error(t('noTable'));
     T = await BT.base.getTableById(m.id); T.__id = m.id;
     const fm = await T.getFieldMetaList(); F = {}; const types = {};
     for (const [k, alts] of Object.entries(NAMES)) { const f = fm.find((x) => alts.includes(String(x.name).trim().toLowerCase())) || fm.find((x) => alts.some((a) => String(x.name).trim().toLowerCase().includes(a))); if (f) { F[k] = f.id; types[k] = f.type; } }
-    const miss = Object.keys(NAMES).filter((k) => !F[k]); if (miss.length) throw new Error('06-Log track 缺少字段：' + miss.map((k) => LABEL[k]).join('、'));
-    if (types.merge !== 1) throw new Error('「合并发货」需要是「文本」字段');
+    const miss = Object.keys(NAMES).filter((k) => !F[k]); if (miss.length) throw new Error(t('missF') + miss.map((k) => LABEL[k]).join(', '));
+    if (types.merge !== 1) throw new Error(t('mergeType'));
   }
   async function readRows() {
     const out = []; let pageToken, guard = 0;
@@ -1576,75 +1592,111 @@ html body {
       pageToken = res.hasMore ? res.pageToken : undefined; } while (pageToken !== undefined && ++guard < 200);
     rows = out.filter((r) => r.order); byId = new Map(rows.map((r) => [r.id, r]));
   }
-  // clients of open (not DONE) rows, merged by ≥95 % similarity
   function clientList() { const out = []; rows.filter((r) => !r.done).forEach((r) => { const c = out.find((x) => similar(x.name, r.client)); if (c) c.n++; else out.push({ name: r.client, n: 1 }); }); return out.sort((a, b) => a.name.localeCompare(b.name)); }
-  const openRows = () => rows.filter((r) => !r.done && similar(r.client, client)).sort(cmpCode);
-  function loadPlan() { plan = new Map(); openRows().forEach((r) => plan.set(r.id, mainOf(r.merge) || '')); dirty = false; }
+  const openRows = () => rows.filter((r) => !r.done && similar(r.client, client));
+  function loadPlan() { plan = new Map(); openRows().forEach((r) => plan.set(r.id, savedOf(r))); }
+  const changedRows = () => openRows().filter((r) => (plan.get(r.id) || '') !== savedOf(r));
+  const dirty = () => changedRows().length > 0;
   function setClient(name) { client = name; loadPlan(); render(); }
-
-  const COLORS = ['#e8f0ff', '#e9f7ef', '#fff4e0', '#f6ebff', '#ffeaea', '#e6f7f7', '#f2f2e3', '#ffeef6'];
-  function render() {
-    if (!rows.length) { msg('台账里没有数据'); return; }
-    const cl = clientList();
-    const sel = `<select id="cli">${client ? '' : '<option value="">— 选择客户 —</option>'}${cl.map((c) => `<option value="${esc(c.name)}" ${similar(c.name, client) ? 'selected' : ''}>${esc(c.name)}（${c.n}）</option>`).join('')}</select>`;
-    if (!client) { $('#body').innerHTML = `<div class="row1">${sel}</div><div class="msg">选择客户，或在台账中点选一行</div>`; bindTop(); return; }
-    const list = openRows(); const cnt = new Map(); list.forEach((r) => { const m = plan.get(r.id); if (m) cnt.set(m, (cnt.get(m) || 0) + 1); }); const mains = [...cnt.keys()].filter((m) => cnt.get(m) > 1).sort();
-    const color = (m) => COLORS[mains.indexOf(m) % COLORS.length];
-    const items = list.map((r) => { const m = plan.get(r.id); const solo = m === codeOf(r) && !list.some((x) => x !== r && plan.get(x.id) === m);
-      const badge = !m ? '<i class="tag none">未安排</i>' : solo ? '<i class="tag solo">单独</i>' : !mains.includes(m) ? `<i class="tag none" title="${esc(display(m))}">随 ${esc(m)}</i>` : `<i class="tag" style="background:${color(m)}">票 ${mains.indexOf(m) + 1}</i>`;
-      return `<label class="it" style="${m && !solo ? 'background:' + color(m) : ''}"><input type="checkbox" data-id="${r.id}"><span class="k">${esc(label(r))}</span>${badge}</label>`; }).join('');
-    const unset = list.filter((r) => !plan.get(r.id)).length;
-    $('#body').innerHTML = `<div class="row1">${sel}</div>
-      <div class="hint">勾选一起发货的批次 →「组成一票」，再勾下一票…… 最后点「保存」。未安排 ${unset} 个</div>
-      <div class="list">${items || '<div class="msg">这个客户没有未发货的批次</div>'}</div>
-      <div class="bar"><button id="grp" class="pri2">组成一票</button><button id="solo">设为单独</button><button id="un">取消安排</button></div>
-      <div class="bar"><button id="restSolo">其余未安排 → 单独</button></div>
-      <div class="bar"><button id="save" class="pri" ${dirty ? '' : 'disabled'}>保存${dirty ? '（有修改）' : ''}</button><button id="reset" ${dirty ? '' : 'disabled'}>撤销修改</button></div>`;
-    bindTop();
-    const checked = () => [...document.querySelectorAll('#body .list input:checked')].map((x) => byId.get(x.dataset.id));
-    $('#grp').onclick = () => { const s = checked(); if (s.length < 2) { toast('至少勾选 2 个批次组成一票', true); return; } const m = s.map(codeOf).sort()[0]; s.forEach((r) => plan.set(r.id, m)); fixMains(); dirty = true; render(); };
-    $('#solo').onclick = () => { const s = checked(); if (!s.length) { toast('先勾选批次', true); return; } s.forEach((r) => plan.set(r.id, codeOf(r))); fixMains(); dirty = true; render(); };
-    $('#un').onclick = () => { const s = checked(); if (!s.length) { toast('先勾选批次', true); return; } s.forEach((r) => plan.set(r.id, '')); fixMains(); dirty = true; render(); };
-    $('#restSolo').onclick = () => { let n = 0; openRows().forEach((r) => { if (!plan.get(r.id)) { plan.set(r.id, codeOf(r)); n++; } }); if (n) { dirty = true; render(); } else toast('没有未安排的批次'); };
-    $('#save').onclick = save; $('#reset').onclick = () => { loadPlan(); render(); };
-  }
-  function bindTop() { const c = $('#cli'); if (c) c.onchange = () => { if (dirty && !window.__forceSwitch) { toast('有未保存的修改，先保存或撤销', true); c.value = client; return; } setClient(c.value); }; }
-  // after regrouping, every group's main = its smallest code (members that left a group no longer pull it)
   function fixMains() { const g = new Map(); openRows().forEach((r) => { const m = plan.get(r.id); if (!m) return; if (!g.has(m)) g.set(m, []); g.get(m).push(r); });
     g.forEach((mem, m) => { const min = mem.map(codeOf).sort()[0]; if (min !== m) mem.forEach((r) => plan.set(r.id, min)); }); }
+
+  // colour families: [dark fill, light fill, tag bg, tag text]
+  const PAL = [['#2e7d32', '#e4f2e5', '#c3e3c5', '#1b5e20'], ['#1565c0', '#e3edfa', '#c2d8f5', '#0d47a1'], ['#e07a00', '#fdf0de', '#f9d9ad', '#9a4f00'], ['#6a3fb5', '#efe8fa', '#d9c9f3', '#4a2486'],
+    ['#00838f', '#dff3f4', '#b5e1e4', '#005961'], ['#c2185b', '#fbe5ee', '#f4bfd3', '#880e40'], ['#827717', '#f3f1dc', '#e3dfa8', '#5b5310']];
+  const GREY = ['#5f6670', '#eceef1', '#d7dbe0', '#3c424a'];
+
+  function header() {
+    return `<header><b>${esc(t('title'))}</b><span class="hb"><button id="tidy">${esc(t('tidy'))}</button><button id="refresh">${esc(t('refresh'))}</button>
+      <button id="lang" title="中文 / English">${lang === 'zh' ? 'EN' : '中'}</button><button id="theme" title="Light / Dark">${theme === 'dark' ? '☀' : '☾'}</button></span></header>`;
+  }
+  function render() {
+    document.documentElement.dataset.theme = theme; document.documentElement.lang = lang === 'zh' ? 'zh' : 'en';
+    let body = '';
+    if (state === 'init') body = `<div class="msg">${esc(t('loading'))}</div>`;
+    else if (state === 'fatal') body = `<div class="msg bad">${esc(fatal)}</div>`;
+    else if (pendingFix) body = tidyHtml();
+    else if (!rows.length) body = `<div class="msg">${esc(t('noData'))}</div>`;
+    else body = mainHtml();
+    $('#app').innerHTML = header() + `<div id="body">${body}</div>`;
+    bind();
+  }
+  function mainHtml() {
+    const cl = clientList();
+    const sel = `<select id="cli">${client ? '' : `<option value="">${esc(t('pickClient'))}</option>`}${cl.map((c) => `<option value="${esc(c.name)}" ${client && similar(c.name, client) ? 'selected' : ''}>${esc(c.name)}（${c.n}）</option>`).join('')}</select>`;
+    if (!client) return `<div class="row1">${sel}</div><div class="msg">${esc(t('pickHint'))}</div>`;
+    const list = openRows(), cnt = new Map(); list.forEach((r) => { const m = plan.get(r.id); if (m) cnt.set(m, (cnt.get(m) || 0) + 1); });
+    const lots = [...cnt.keys()].filter((m) => cnt.get(m) > 1).sort();
+    const done = list.filter((r) => plan.get(r.id)).sort((a, b) => plan.get(a.id).localeCompare(plan.get(b.id)) || codeOf(a).localeCompare(codeOf(b)));
+    const pend = list.filter((r) => !plan.get(r.id)).sort((a, b) => codeOf(a).localeCompare(codeOf(b)));
+    const auto = pend.length === 1 ? pend[0].id : null;
+    const item = (r) => { const m = plan.get(r.id), changed = (m || '') !== savedOf(r);
+      let pal = null, tag = `<i class="tag pend">${esc(t('tagPend'))}</i>`;
+      if (m) { const li = lots.indexOf(m);
+        if (li >= 0) { pal = PAL[li % PAL.length]; tag = t('tagLot', li + 1); }
+        else if (m === codeOf(r)) { pal = GREY; tag = t('tagSolo'); }
+        else { pal = GREY; tag = t('tagWith', m); }
+        tag = `<i class="tag" style="background:${pal[2]};color:${pal[3]}">${esc(tag)}</i>`; }
+      const style = !pal ? '' : changed ? `background:${pal[0]};color:#fff;font-weight:600` : `background:${theme === 'dark' ? pal[0] + '38' : pal[1]};color:var(--muted)`;
+      return `<label class="it ${pal ? (changed ? 'chg' : 'sav') : 'pd'}" style="${style}"><input type="checkbox" data-id="${r.id}" ${r.id === auto ? 'checked' : ''}><span class="k">${esc(label(r))}</span>${tag}</label>`; };
+    const nChg = changedRows().length;
+    return `<div class="row1">${sel}</div><div class="hint">${esc(t('hint', pend.length))}</div>
+      <div class="list">${list.length ? done.map(item).join('') + (done.length && pend.length ? '<div class="sep"></div>' : '') + pend.map(item).join('') : `<div class="msg">${esc(t('none'))}</div>`}</div>
+      <div class="btns">
+        <div class="bar"><button id="grp">${esc(t('group'))}</button><button id="solo">${esc(t('solo'))}</button></div>
+        <div class="bar"><button id="rest">${esc(t('rest'))}</button></div>
+        <div class="bar"><button id="ungrp">${esc(t('ungroup'))}</button><button id="clr">${esc(t('clearAll'))}</button></div>
+        <div class="bar"><button id="undo" disabled>${esc(t('undo'))}</button><button id="save" class="pri" ${nChg ? '' : 'disabled'}>${esc(nChg ? t('saveDirty', nChg) : t('save'))}</button></div>
+      </div>`;
+  }
+  function tidyHtml() {
+    const li = pendingFix.slice(0, 300).map((c) => `<div class="fx"><b>${esc(label(c.r))}</b><span>${esc(c.r.merge || t('empty'))} → ${esc(c.val)}</span></div>`).join('');
+    return `<div class="hint">${esc(t('tidyHint', pendingFix.length))}</div><div class="list">${li}</div>
+      <div class="btns"><div class="bar"><button id="ok" class="pri">${esc(t('tidyOk'))}</button><button id="no">${esc(t('cancel'))}</button></div></div>`;
+  }
+  const checked = () => [...document.querySelectorAll('#body .list input:checked')].map((x) => byId.get(x.dataset.id));
+  function bind() {
+    $('#lang').onclick = () => { lang = lang === 'zh' ? 'en' : 'zh'; LS.set('lang', lang); render(); };
+    $('#theme').onclick = () => { theme = theme === 'dark' ? 'light' : 'dark'; LS.set('theme', theme); render(); };
+    $('#refresh').onclick = async () => { if (dirty()) { toast(t('unsaved'), true); return; } await readRows(); loadPlan(); render(); toast(t('refreshed')); };
+    $('#tidy').onclick = () => { if (dirty()) { toast(t('unsaved'), true); return; } pendingFix = tidyChanges(); if (!pendingFix.length) { pendingFix = null; toast(t('tidyNone')); return; } render(); };
+    const c = $('#cli'); if (c) c.onchange = () => { if (dirty()) { toast(t('unsaved'), true); c.value = client; return; } setClient(c.value); };
+    if ($('#ok')) { $('#ok').onclick = applyTidy; $('#no').onclick = () => { pendingFix = null; render(); }; }
+    if (!$('#grp')) return;
+    const syncUndo = () => { $('#undo').disabled = !checked().some((r) => (plan.get(r.id) || '') !== savedOf(r)); };
+    document.querySelectorAll('#body .list input').forEach((x) => { x.onchange = syncUndo; }); syncUndo();
+    const act = (fn, need) => () => { const s = checked(); if (need && s.length < need) { toast(need > 1 ? t('needTwo') : t('needPick'), true); return; } fn(s); fixMains(); render(); };
+    $('#grp').onclick = act((s) => { const m = s.map(codeOf).sort()[0]; s.forEach((r) => plan.set(r.id, m)); }, 2);
+    $('#solo').onclick = act((s) => s.forEach((r) => plan.set(r.id, codeOf(r))), 1);
+    $('#ungrp').onclick = act((s) => s.forEach((r) => plan.set(r.id, '')), 1);
+    $('#clr').onclick = act(() => openRows().forEach((r) => plan.set(r.id, '')), 0);
+    $('#rest').onclick = () => { const p = openRows().filter((r) => !plan.get(r.id)); if (!p.length) { toast(t('noRest')); return; } p.forEach((r) => plan.set(r.id, codeOf(r))); render(); };
+    $('#undo').onclick = act((s) => s.forEach((r) => plan.set(r.id, savedOf(r))), 1);
+    $('#save').onclick = save;
+  }
   async function write(changes) {
     if (!changes.length) return; const recs = changes.map((c) => ({ recordId: c.id, fields: { [F.merge]: c.val || null } }));
     try { if (T.setRecords) { for (let i = 0; i < recs.length; i += 100) await T.setRecords(recs.slice(i, i + 100)); return; } } catch (e) { console.warn('setRecords', e); }
     for (const c of changes) { try { await T.setCellValue(F.merge, c.id, c.val || null); } catch (e) { await T.setCellValue(F.merge, c.id, c.val ? [{ type: 'text', text: c.val }] : null); } }
   }
   async function save() {
-    if (busy) return; const ch = [];
-    openRows().forEach((r) => { const m = plan.get(r.id); const v = m ? display(m) : ''; if (v !== r.merge) ch.push({ id: r.id, val: v }); });
-    busy = true; try { await write(ch); await readRows(); loadPlan(); render(); toast(`已保存 ${ch.length} 行`); } catch (e) { console.error(e); toast('保存失败：' + (e.message || e), true); } finally { busy = false; }
+    if (busy) return; const ch = openRows().map((r) => { const m = plan.get(r.id); return { id: r.id, val: m ? display(m) : '', r }; }).filter((c) => c.val !== c.r.merge); // also rewrites old formats in place
+    busy = true; try { await write(ch); await readRows(); loadPlan(); render(); toast(t('saved', ch.length)); } catch (e) { console.error(e); toast(t('saveFail') + (e.message || e), true); } finally { busy = false; }
   }
-  // tidy the whole ledger: every open row gets "code · name" of its group's smallest batch; blanks -> own
   function tidyChanges() {
     const open = rows.filter((r) => !r.done), g = new Map();
     open.forEach((r) => { const m = mainOf(r.merge) || codeOf(r); if (!g.has(m)) g.set(m, []); g.get(m).push(r); });
     const ch = []; g.forEach((mem) => { const min = mem.map(codeOf).sort()[0]; mem.forEach((r) => { const v = display(min); if (v !== r.merge) ch.push({ id: r.id, val: v, r }); }); });
     return ch;
   }
-  function showTidy() {
-    pendingFix = tidyChanges();
-    if (!pendingFix.length) { toast('全部已整理，无需修改'); return; }
-    const li = pendingFix.slice(0, 200).map((c) => `<div class="fx"><b>${esc(label(c.r))}</b><span>${esc(c.r.merge || '（空）')} → ${esc(c.val)}</span></div>`).join('');
-    $('#body').innerHTML = `<div class="hint">整理全部未发货批次：空白的填自己的编码，旧格式改成新格式，每票以编码最小的批次为主批次。共 ${pendingFix.length} 行要修改：</div>
-      <div class="list">${li}</div><div class="bar"><button id="ok" class="pri">确认修改</button><button id="no">取消</button></div>`;
-    $('#ok').onclick = async () => { if (busy) return; busy = true; try { await write(pendingFix); await readRows(); toast(`已整理 ${pendingFix.length} 行`); } catch (e) { toast('整理失败：' + (e.message || e), true); } finally { busy = false; pendingFix = null; loadPlan(); render(); } };
-    $('#no').onclick = () => { pendingFix = null; render(); };
-  }
-  async function onSel(s) { if (!s || !s.recordId || (s.tableId && s.tableId !== T.__id)) return; if (dirty || pendingFix) return;
-    let r = byId.get(s.recordId); if (!r) { await readRows(); r = byId.get(s.recordId); } if (r && !similar(r.client, client)) setClient(r.client); }
+  async function applyTidy() { if (busy) return; busy = true; const n = pendingFix.length;
+    try { await write(pendingFix); await readRows(); toast(t('tidyDone', n)); } catch (e) { toast(t('tidyFail') + (e.message || e), true); } finally { busy = false; pendingFix = null; loadPlan(); render(); } }
+  async function onSel(s) { if (!s || !s.recordId || !T || (s.tableId && s.tableId !== T.__id)) return; if (dirty() || pendingFix) return;
+    let r = byId.get(s.recordId); if (!r) { await readRows(); r = byId.get(s.recordId); } if (r && !r.done && !similar(r.client, client)) setClient(r.client); }
   async function init() {
-    if (!BT) { msg('请在 Lark 多维表格的插件侧边栏中打开', 'bad'); return; }
-    msg('读取中…'); try { await findTable(); await readRows(); } catch (e) { msg(esc(e.message || e), 'bad'); return; }
-    $('#refresh').onclick = async () => { if (dirty) { toast('有未保存的修改，先保存或撤销', true); return; } await readRows(); loadPlan(); render(); toast('已刷新'); };
-    $('#tidy').onclick = () => { if (dirty) { toast('有未保存的修改，先保存或撤销', true); return; } showTidy(); };
+    render();
+    if (!BT) { state = 'fatal'; fatal = t('openInLark'); render(); return; }
+    try { await findTable(); await readRows(); state = 'ok'; } catch (e) { state = 'fatal'; fatal = e.message || String(e); render(); return; }
     try { BT.base.onSelectionChange((ev) => onSel(ev && ev.data)); } catch (e) { console.warn(e); }
     render(); try { await onSel(await BT.base.getSelection()); } catch (e) { console.warn(e); }
   }
